@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { identify, track } from "../../lib/useTikTokEvents";
+import { trackSnapProduct } from "../../lib/snapPixel";
+import { useSnapProductView } from "../../lib/useSnapProductView";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { IoArrowForward, IoShareSocial, IoHomeOutline, IoChevronBack, IoCartOutline } from "react-icons/io5";
@@ -20,6 +22,12 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
   const addItem = useCartStore((s) => s.addItem);
 
   const product = initialProduct;
+  useSnapProductView(product);
+
+  const addProductToCart = (product: Product, qty: number) => {
+    addItem(product, qty);
+    trackSnapProduct('ADD_CART', product, qty);
+  };
 
   useEffect(() => {
     if (!product) return;
@@ -99,7 +107,7 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
             product={product}
             addedToCart={addedToCart}
             onAddToCart={(qty) => {
-              addItem(product, qty);
+              addProductToCart(product, qty);
               setAddedToCart(true);
               track("AddToCart", {
                 contents: [{ content_id: product._id, content_type: "product", content_name: product.name }],
@@ -107,7 +115,7 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
                 currency: "SAR",
               });
             }}
-            onBuyNow={(qty) => { addItem(product, qty); router.push("/cart"); }}
+            onBuyNow={(qty) => { addProductToCart(product, qty); router.push("/cart"); }}
           />
         </div>
         <ProductDetails
@@ -137,7 +145,7 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               if (addedToCart) router.push("/cart");
-              else { addItem(product, 1); setAddedToCart(true); }
+              else { addProductToCart(product, 1); setAddedToCart(true); }
             }}
             className="cart-btn w-full py-4 rounded-2xl flex items-center justify-center gap-2 text-base font-black"
           >

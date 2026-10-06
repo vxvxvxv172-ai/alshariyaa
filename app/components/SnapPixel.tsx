@@ -1,17 +1,19 @@
 'use client';
 
 import Script from 'next/script';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { initializeSnapPixel } from '../lib/snapPixel';
 
 export default function SnapPixel() {
-  return (
-    <Script
-      id="snap-pixel"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{
-        __html: `(function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function(){a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};a.queue=[];var s='script';var r=t.createElement(s);r.async=!0;r.src=n;var u=t.getElementsByTagName(s)[0];u.parentNode.insertBefore(r,u);})(window,document,'https://sc-static.net/scevent.min.js');
-snaptr('init', 'b1332f62-8968-4e0d-a4a1-767e4b121ed3', {});
-snaptr('track', 'PAGE_VIEW');`,
-      }}
-    />
-  );
+  const pathname = usePathname();
+  const previousPath = useRef<string | null>(null);
+  useEffect(() => {
+    const snaptr = initializeSnapPixel();
+    if (pathname && previousPath.current !== pathname) {
+      snaptr('track', 'PAGE_VIEW');
+      previousPath.current = pathname;
+    }
+  }, [pathname]);
+  return <Script id="snap-pixel-sdk" src="https://sc-static.net/scevent.min.js" strategy="afterInteractive" />;
 }

@@ -12,6 +12,7 @@ import {
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
 import { useCartPopupStore } from "../../store/cartPopupStore";
+import { trackSnapProduct } from "../../lib/snapPixel";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const resolveImgUrl = (src: string) => {
@@ -62,6 +63,7 @@ export default function ProductCard({
 
     // addItem is synchronous (Zustand local store)
     addItem(product);
+    trackSnapProduct('ADD_CART', product);
 
     setLoading(false);
     setAdded(true);
