@@ -83,3 +83,27 @@ test('view hook handles missing products, Strict Mode, rerenders and navigation'
   view.rerender({ current: product });
   expect(window.snaptr!.queue).toHaveLength(4);
 });
+
+test('creates the Snap queue and initializes before injecting the SDK, only once', () => {
+  document.querySelectorAll('script[src="https://sc-static.net/scevent.min.js"]').forEach(script => script.remove());
+  const append = document.head.appendChild.bind(document.head);
+  const spy = jest.spyOn(document.head, 'appendChild').mockImplementation(node => {
+    expect(window.snaptr!.queue).toEqual([['init', SNAP_PIXEL_ID, {}]]);
+    return append(node);
+  });
+  try {
+    initializeSnapPixel();
+    initializeSnapPixel();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(document.querySelector<HTMLScriptElement>('#snap-pixel-sdk')!.async).toBe(true);
+  } finally {
+    spy.mockRestore();
+  }
+});
+test('product events initialize and load SDK even before the page effect', () => {
+  document.querySelectorAll('script[src="https://sc-static.net/scevent.min.js"]').forEach(script => script.remove());
+  trackSnapProduct('VIEW_CONTENT', product);
+  expect(document.querySelector('#snap-pixel-sdk')).not.toBeNull();
+  expect(window.snaptr!.queue![0]).toEqual(['init', SNAP_PIXEL_ID, {}]);
+  expect(window.snaptr!.queue![1][1]).toBe('VIEW_CONTENT');
+});

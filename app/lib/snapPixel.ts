@@ -15,7 +15,7 @@ declare global {
 export function initializeSnapPixel(): SnapTracker {
   if (!window.snaptr) {
     const tracker: SnapTracker = (...args) => {
-      if (tracker.handleRequest) tracker.handleRequest(...args);
+      if (tracker.handleRequest) tracker.handleRequest.apply(tracker, args);
       else tracker.queue!.push(args);
     };
     tracker.queue = [];
@@ -24,6 +24,15 @@ export function initializeSnapPixel(): SnapTracker {
   if (!window.sharehaaSnapInitialized) {
     window.snaptr('init', SNAP_PIXEL_ID, {});
     window.sharehaaSnapInitialized = true;
+  }
+  // Match Snap's bootstrap ordering: create the queue before loading the SDK.
+  // Product events can initialize first, before the root layout effect runs.
+  if (!document.querySelector('script[src="https://sc-static.net/scevent.min.js"]')) {
+    const script = document.createElement('script');
+    script.id = 'snap-pixel-sdk';
+    script.async = true;
+    script.src = 'https://sc-static.net/scevent.min.js';
+    document.head.appendChild(script);
   }
   return window.snaptr;
 }
