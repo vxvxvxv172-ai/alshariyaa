@@ -1,6 +1,7 @@
 import type { Product } from '../components/products/types';
 
 export const SNAP_PIXEL_ID = 'dad784dc-ac9c-45d9-88f5-0981429fcd59';
+export const ADDITIONAL_SNAP_PIXEL_ID = 'eae6c077-579c-45a5-a052-be7679d051ac';
 type SnapCommand = [command: string, eventOrId: string, data?: Record<string, unknown>];
 type SnapTracker = ((...args: SnapCommand) => void) & {
   queue?: SnapCommand[];
@@ -23,6 +24,7 @@ export function initializeSnapPixel(): SnapTracker {
   }
   if (!window.sharehaaSnapInitialized) {
     window.snaptr('init', SNAP_PIXEL_ID, {});
+    window.snaptr('init', ADDITIONAL_SNAP_PIXEL_ID, {});
     window.sharehaaSnapInitialized = true;
   }
   // Match Snap's bootstrap ordering: create the queue before loading the SDK.
