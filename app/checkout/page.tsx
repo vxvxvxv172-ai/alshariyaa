@@ -14,6 +14,7 @@ import CustomerSection, { validateCustomer } from "./CustomerSection";
 import type { CustomerData } from "./CustomerSection";
 import { useAuthStore } from "../store/authStore";
 import { identify, track } from "../lib/useTikTokEvents";
+import { initializeSnapPixel } from "../lib/snapPixel";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -99,6 +100,15 @@ export default function CheckoutPage() {
       value: Math.max(0, totalPrice() - discount),
       currency: "SAR",
     });
+    // Snap START_CHECKOUT
+    try {
+      initializeSnapPixel()('track', 'START_CHECKOUT', {
+        price: Math.max(0, totalPrice() - discount),
+        currency: 'SAR',
+        item_ids: items.map(i => i.product._id),
+        number_items: items.reduce((s, i) => s + i.qty, 0),
+      });
+    } catch { /* analytics must not break checkout */ }
   }, [mounted]);
 
   if (!mounted) return null;

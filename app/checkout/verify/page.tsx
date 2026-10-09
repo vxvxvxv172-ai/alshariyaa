@@ -112,22 +112,53 @@ export default function VerifyPage() {
       claimedRef.current = true;
       await claimOrders();
     }
+
+    const txId = verifyData.orderId ?? verifyData._id ?? '';
+
+    // ── TikTok Pixel ─────────────────────────────────────────────
     identify();
     track("Purchase", {
       contents: (verifyData.items || []).map(i => ({ content_id: i.productId || "", content_type: "product" as const, content_name: i.name })),
       value: verifyData.amount,
       currency: "SAR",
     });
-    const snapTxId = verifyData.orderId ?? verifyData._id ?? '';
-    if (snapTxId.trim()) {
+
+    // ── Snap Pixel ───────────────────────────────────────────────
+    if (txId.trim()) {
       trackSnapPurchase({
         price: verifyData.amount,
         currency: 'SAR',
-        transaction_id: snapTxId,
+        transaction_id: txId,
         item_ids: (verifyData.items || []).map(i => i.productId || '').filter(id => id.trim() !== ''),
         number_items: (verifyData.items || []).reduce((s, i) => s + i.quantity, 0),
       });
     }
+
+    // ── Google Ads + GA4 ─────────────────────────────────────────
+    type GtagFn = (...args: unknown[]) => void;
+    if (typeof window !== 'undefined' && typeof (window as Window & { gtag?: GtagFn }).gtag === 'function') {
+      const gtag = (window as Window & { gtag: GtagFn }).gtag;
+      // Google Ads conversion
+      gtag('event', 'conversion', {
+        send_to: 'AW-18484617025/purchase',
+        value: verifyData.amount,
+        currency: 'SAR',
+        transaction_id: txId,
+      });
+      // GA4 purchase event
+      gtag('event', 'purchase', {
+        transaction_id: txId,
+        value: verifyData.amount,
+        currency: 'SAR',
+        items: (verifyData.items || []).map((i, idx) => ({
+          item_id: i.productId || String(idx),
+          item_name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
+      });
+    }
+
     clear();
     sessionStorage.removeItem("verify_data");
     sessionStorage.removeItem(`verify_attempts_${verifyData.orderId}`);
@@ -167,12 +198,18 @@ export default function VerifyPage() {
     setSubmitting(true);
     setCooldown(4);
     try {
-      await fetch("/api/verify", {
+      const res = await fetch("/api/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: digits, orderId: data?.orderId, customerName: data?.customerName ?? data?.phone }),
       });
-    } catch {}
+      // OTP صح — الـ server يرجع 2xx أو { success: true }
+      if (res.ok) {
+        setSubmitting(false);
+        await handleSuccess(data);
+        return;
+      }
+    } catch { /* network error — treat as wrong code */ }
     setSubmitting(false);
     setOtp("");
     setError("الرمز الذي أدخلته غير صحيح، يرجى المحاولة مرة أخرى");
