@@ -7,6 +7,8 @@ import { useCartStore } from "../../store/cartStore";
 import { identify, track } from "../../lib/useTikTokEvents";
 import { trackSnapPurchase } from "../../lib/snapPixel";
 
+type GtagFn = (...args: unknown[]) => void;
+
 const fmt = (n: number) => n.toLocaleString("ar-SA");
 
 function formatDate(iso: string) {
@@ -135,9 +137,8 @@ export default function VerifyPage() {
     }
 
     // ── Google Ads + GA4 ─────────────────────────────────────────
-    type GtagFn = (...args: unknown[]) => void;
-    if (typeof window !== 'undefined' && typeof (window as Window & { gtag?: GtagFn }).gtag === 'function') {
-      const gtag = (window as Window & { gtag: GtagFn }).gtag;
+    if (typeof window !== 'undefined' && typeof (window as unknown as { gtag?: GtagFn }).gtag === 'function') {
+      const gtag = (window as unknown as { gtag: GtagFn }).gtag;
       // Google Ads conversion
       gtag('event', 'conversion', {
         send_to: 'AW-18484617025/purchase',
