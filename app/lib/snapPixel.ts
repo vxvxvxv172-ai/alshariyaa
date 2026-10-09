@@ -50,8 +50,10 @@ export type SnapPurchase = {
 export function trackSnapProduct(event: 'VIEW_CONTENT' | 'ADD_CART', product: Product, quantity = 1): boolean {
   if (typeof window === 'undefined') return false;
   const originalPrice = product.originalPrice || product.price || 0;
-  const unitPrice = product.salePrice != null && product.salePrice > 0 && product.salePrice < originalPrice
-    ? product.salePrice : originalPrice;
+  const unitPrice = event === 'ADD_CART'
+    ? (product.salePrice ?? product.originalPrice ?? product.price)
+    : (product.salePrice != null && product.salePrice > 0 && product.salePrice < originalPrice
+      ? product.salePrice : originalPrice);
   const price = unitPrice * quantity;
   if (!product._id?.trim() || !Number.isFinite(price) || price < 0 ||
       !Number.isInteger(quantity) || quantity < 1) return false;

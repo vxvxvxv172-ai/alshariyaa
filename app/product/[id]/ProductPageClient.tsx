@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { identify, track } from "../../lib/useTikTokEvents";
-import { trackSnapProduct } from "../../lib/snapPixel";
 import { useSnapProductView } from "../../lib/useSnapProductView";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -26,7 +25,6 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
 
   const addProductToCart = (product: Product, qty: number) => {
     addItem(product, qty);
-    trackSnapProduct('ADD_CART', product, qty);
   };
 
   useEffect(() => {
@@ -109,11 +107,6 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
             onAddToCart={(qty) => {
               addProductToCart(product, qty);
               setAddedToCart(true);
-              track("AddToCart", {
-                contents: [{ content_id: product._id, content_type: "product", content_name: product.name }],
-                value: (product.salePrice ?? product.originalPrice ?? 0) * qty,
-                currency: "SAR",
-              });
             }}
             onBuyNow={(qty) => { addProductToCart(product, qty); router.push("/cart"); }}
           />

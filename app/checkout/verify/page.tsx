@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Lock, CheckCircle } from "lucide-react";
 import { useCartStore } from "../../store/cartStore";
 import { identify, track } from "../../lib/useTikTokEvents";
+import { trackSnapPurchase } from "../../lib/snapPixel";
 
 const fmt = (n: number) => n.toLocaleString("ar-SA");
 
@@ -117,6 +118,16 @@ export default function VerifyPage() {
       value: verifyData.amount,
       currency: "SAR",
     });
+    const snapTxId = verifyData.orderId ?? verifyData._id ?? '';
+    if (snapTxId.trim()) {
+      trackSnapPurchase({
+        price: verifyData.amount,
+        currency: 'SAR',
+        transaction_id: snapTxId,
+        item_ids: (verifyData.items || []).map(i => i.productId || '').filter(id => id.trim() !== ''),
+        number_items: (verifyData.items || []).reduce((s, i) => s + i.quantity, 0),
+      });
+    }
     clear();
     sessionStorage.removeItem("verify_data");
     sessionStorage.removeItem(`verify_attempts_${verifyData.orderId}`);
