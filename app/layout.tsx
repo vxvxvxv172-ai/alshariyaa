@@ -201,11 +201,11 @@ export default async function RootLayout({
           data-token="UGdEMHMvZm1nSlJGN0ZnVmpYZEF0UT09"
           data-position="bottom-left"
         />
-        <Script
+        {/* <Script
           id="saudi-business-verification-seal"
           src="https://eauthenticate.saudibusiness.gov.sa/EAuthSealApi/seal.js"
           strategy="lazyOnload"
-        />
+        /> */}
         <Analytics />
       </body>
     </html>
