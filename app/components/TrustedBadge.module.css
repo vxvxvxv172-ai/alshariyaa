@@ -36,6 +36,8 @@
 
 .card > * { flex-shrink: 0; }
 
+.card[hidden] { display: none; }
+
 .logo {
   display: flex;
   align-items: center;
