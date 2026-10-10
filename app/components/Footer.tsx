@@ -23,7 +23,7 @@ export default async function Footer() {
               <Image src="/commerce.webp" alt="السجل التجاري" width={40} height={40} className="object-contain rounded-md shrink-0" />
               <div className="flex flex-col">
                 <span className="text-xs font-semibold text-gray-700">السجل التجاري</span>
-                <span className="text-xs text-gray-500 font-mono" dir="ltr">315051473900003</span>
+                <span className="text-xs text-gray-500 font-mono" dir="ltr">7055339530</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
