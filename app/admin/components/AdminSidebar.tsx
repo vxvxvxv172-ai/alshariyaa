@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Users, Building2, FolderOpen, Landmark,
+  LayoutDashboard, Users, Building2, Landmark,
   MessageSquare, Grid2X2, Layers, ListTree, Package, ShoppingCart, X,
 } from "lucide-react";
 
@@ -10,7 +10,6 @@ const navItems = [
   { href: "/admin/dashboard", label: "الرئيسية", icon: LayoutDashboard },
   { href: "/admin/users", label: "إدارة المستخدمين", icon: Users },
   { href: "/admin/company", label: "بيانات الشركة", icon: Building2 },
-  { href: "/admin/files", label: "الملفات", icon: FolderOpen },
 
   // { href: "/admin/banks", label: "البنوك", icon: Landmark },
   { href: "/admin/reviews", label: "آراء العملاء", icon: MessageSquare },

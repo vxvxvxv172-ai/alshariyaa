@@ -5,35 +5,6 @@ import { getCompany } from "../lib/getCompany";
 export default async function Footer() {
   const c = await getCompany();
 
-  function ensureAbsolute(url: string) {
-    if (!url) return "";
-    return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
-  }
-
-  function toInlineUrl(url: string) {
-    if (!url) return "";
-    return `/file-view?url=${encodeURIComponent(url)}`;
-  }
-
-  const qrSrc: string = c.qrImage || "";
-  const qrLinkType: string = c.qrFile ? "file" : (c.qrLinkType || "link");
-  const qrLink: string = qrLinkType === "file" ? toInlineUrl(c.qrFile || "") : ensureAbsolute(c.qrLink || "");
-
-  const footerItems: { image: string; linkType: string; link: string; file: string }[] =
-    (c.footerItems || []).filter((item: { image: string }) => item.image);
-
-  const img1: string = c.img1 || "";
-  const linkType1: string = c.file1 ? "file" : (c.link1Type || c.linkType1 || "link");
-  const link1: string = linkType1 === "file" ? toInlineUrl(c.file1 || "") : ensureAbsolute(c.link1 || "");
-
-  function getHref(item: { linkType: string; link: string; file: string }) {
-    if (item.file) return toInlineUrl(item.file);
-    if (item.linkType === "link" && item.link) return ensureAbsolute(item.link);
-    return "";
-  }
-
-  const hasImages = qrSrc || footerItems.length > 0 || img1; // || true; // VAT certificate is always shown
-
   return (
     <footer dir="rtl" className="mt-16 border-t border-gray-200" style={{ background: "#F3F4F6" }}>
 
@@ -48,27 +19,21 @@ export default async function Footer() {
             <p className="text-sm leading-7 text-gray-600 whitespace-pre-line">
               {c.details || "الشريحة الموثوقة - شرائح اتصال وإنترنت بأسعار منافسة، مع خدمة سريعة وآمنة ودعم عملاء مميز. ثقتكم غايتنا وخدمتكم أولويتنا"}
             </p>
-            {/* 
-            <div className="flex flex-col gap-2">
-              <a href="https://qr.saudibusiness.gov.sa/viewcr?nCrNumber=ZWAcF0Nm56G7jKRA+f4WCw==" target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 group">
-                <Image src="/commerce.webp" alt="سجل تجاري" width={36} height={36} className="object-contain rounded-md shrink-0" />
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-black group-hover:underline">السجل التجاري</span>
-                  <span className="text-xs text-gray-500 font-mono">7055249325</span>
-                </div>
-              </a>
-             <a href="https://eauthenticate.saudibusiness.gov.sa/inquiry" target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 group">
-                <Image src="/work.webp" alt="شهادة توثيق" width={36} height={36} className="object-contain rounded-md shrink-0" />
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-black group-hover:underline">شهادة توثيق</span>
-                  <span className="text-xs text-gray-500">مركز الاعمال</span>
-                  <span className="text-xs text-gray-500 font-mono">0000328458</span>
-                </div>
-              </a>
+            <div className="flex items-center gap-3">
+              <Image src="/commerce.webp" alt="السجل التجاري" width={40} height={40} className="object-contain rounded-md shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-gray-700">السجل التجاري</span>
+                <span className="text-xs text-gray-500 font-mono" dir="ltr">315051473900003</span>
+              </div>
             </div>
-            */}
+            <div className="flex items-center gap-3">
+              <Image src="/work.webp" alt="شهادة توثيق" width={40} height={40} className="object-contain rounded-md shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-gray-700">شهادة توثيق</span>
+                <span className="text-xs text-gray-500">مركز الاعمال</span>
+                <span className="text-xs text-gray-500 font-mono" dir="ltr">0000331902</span>
+              </div>
+            </div>
           </div>
 
           {/* Contact details */}
@@ -111,44 +76,15 @@ export default async function Footer() {
               )}
             </ul>
 
-            {hasImages && (
-              <div className="flex gap-2 items-center flex-wrap mt-1">
-                {qrSrc && (
-                  qrLink
-                    ? <a href={qrLink} target="_blank" rel="noreferrer" className="shrink-0">
-                        <Image src={qrSrc} alt="qr" width={200} height={200} className="rounded-lg bg-white p-1 h-auto w-auto max-h-20 md:max-h-24 border border-gray-200" />
-                      </a>
-                    : <Image src={qrSrc} alt="qr" width={200} height={200} className="rounded-lg bg-white p-1 shrink-0 h-auto w-auto max-h-20 md:max-h-24 border border-gray-200" />
-                )}
-                {footerItems.map((item, i) => {
-                  const href = getHref(item);
-                  const el = <Image key={i} src={item.image} alt={`footer-item-${i}`} width={200} height={200} className="rounded-lg h-auto w-auto max-h-20 md:max-h-24" />;
-                  return href
-                    ? <a key={i} href={href} target="_blank" rel="noreferrer" className="shrink-0">{el}</a>
-                    : <span key={i} className="shrink-0">{el}</span>;
-                })}
-                {img1 && (link1
-                  ? <a href={link1} target="_blank" rel="noreferrer" className="shrink-0"><Image src={img1} alt="img1" width={200} height={200} className="rounded-lg h-auto w-auto max-h-20 md:max-h-24" /></a>
-                  : <Image src={img1} alt="img1" width={200} height={200} className="rounded-lg shrink-0 h-auto w-auto max-h-20 md:max-h-24" />
-                )}
-                {/* 
-                <a
-                  href="/شهادة تسجيل جديد في ضريبة القيمة المضافةPDF_260920_203336.pdf"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="shrink-0"
-                >
-                  <Image
-                    src="/شعار ضريبة القيمة المضافة بدقة عالية svg - png (1).png"
-                    alt="شهادة ضريبة القيمة المضافة"
-                    width={200}
-                    height={200}
-                    className="rounded-lg h-auto w-auto max-h-20 md:max-h-24"
-                  />
-                </a>
-                */}
-              </div>
-            )}
+            <a href="/qema.pdf" target="_blank" rel="noreferrer" className="shrink-0 self-start">
+              <Image
+                src="/شعار ضريبة القيمة المضافة بدقة عالية svg - png (1).png"
+                alt="شهادة ضريبة القيمة المضافة"
+                width={200}
+                height={200}
+                className="rounded-lg h-auto w-auto max-h-20 md:max-h-24 hover:opacity-80 transition-opacity"
+              />
+            </a>
           </div>
         </div>
 
@@ -168,7 +104,6 @@ export default async function Footer() {
             <Image src="/Apple-Pay-01.png" alt="apple pay" width={56} height={36} className="object-contain" style={{ height: "36px", width: "auto" }} />
             <Image src="/work.webp" alt="salla" width={36} height={24} className="object-contain" style={{ height: "24px", width: "auto" }} />
             <Image src="/commerce.webp" alt="salla" width={36} height={24} className="object-contain" style={{ height: "24px", width: "auto" }} />
-
           </div>
         </div>
       </div>

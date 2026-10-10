@@ -16,11 +16,10 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
-  const isFileView = pathname.startsWith("/file-view");
   const isVerify = pathname === "/checkout/verify";
   const isMaintenance = pathname.startsWith("/maintenance");
   const isAuth = pathname.startsWith("/auth");
-  const hideChrome = isAdmin || isFileView || isVerify || isMaintenance;
+  const hideChrome = isAdmin || isVerify || isMaintenance;
 
   return (
     <AuthProvider>
