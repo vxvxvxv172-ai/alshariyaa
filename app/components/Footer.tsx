@@ -31,7 +31,7 @@ export default async function Footer() {
               <div className="flex flex-col">
                 <span className="text-xs font-semibold text-gray-700">شهادة توثيق</span>
                 <span className="text-xs text-gray-500">مركز الاعمال</span>
-                <span className="text-xs text-gray-500 font-mono" dir="ltr">0000331902</span>
+                <span className="text-xs text-gray-500 font-mono" dir="ltr">0000331984</span>
               </div>
             </div>
           </div>

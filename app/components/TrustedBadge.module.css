@@ -1,0 +1,209 @@
+.widget {
+  position: fixed;
+  bottom: 24px;
+  left: 40px;
+  z-index: 50;
+  font-family: 'FormaDJR', Arial, sans-serif;
+  font-weight: 500;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.card {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: -18px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: min(320px, calc(100vw - 32px));
+  max-height: calc(100dvh - 104px);
+  overflow-y: auto;
+  padding: 20px 14px;
+  border: 1px solid #49415e;
+  border-radius: 19px;
+  background: #251f45;
+  color: #c0bbd1;
+  box-shadow: 0 5px 14px rgb(0 0 0 / 18%);
+  text-align: center;
+}
+
+.card > * { flex-shrink: 0; }
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.logo img { width: 158px; height: auto; }
+
+.heading {
+  margin: 4px 0 10px;
+  color: #fff;
+  font-family: 'DINNextArabic', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.website {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+  color: #c0bbd1;
+  font-size: 13px;
+  line-height: 1.6;
+  text-decoration: none;
+}
+
+.website strong {
+  color: #fff;
+  font-family: 'DINNextArabic', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.website > span,
+.company,
+.statusRow,
+.date {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.company { margin: 1px 0 15px; color: #a49bb8; line-height: 1.6; }
+
+.qrFrame {
+  width: 194px;
+  height: 194px;
+  padding: 7px;
+  box-sizing: border-box;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #562039 0%, #71304e 46%, #58203b 68%, #f45b60 100%);
+}
+
+.qr {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.qr > img { display: block; width: 100%; height: 100%; }
+
+.check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border: 4px solid #fff;
+  border-radius: 13px;
+  background: #7553c6;
+  color: #fff;
+}
+
+.statusRow { display: flex; align-items: center; gap: 5px; margin-top: 10px; line-height: 1.4; }
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 58px;
+  height: 25px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid #abefc6;
+  border-radius: 999px;
+  background: #ecfdf3;
+  color: #067647;
+  font-family: 'FormaDJR', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #17b26a;
+}
+.date { margin: 2px 0 0; line-height: 1.6; }
+.date span { display: inline-block; }
+
+.verify {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 144px;
+  min-height: 39px;
+  margin-top: 23px;
+  border-radius: 14px;
+  background: #7351c7;
+  box-shadow: 0 8px 18px rgb(115 81 199 / 35%);
+  color: #fff;
+  font-family: 'DINNextArabic', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.trigger {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 47px;
+  padding: 6px 15px;
+  border: 1.5px solid #795ac1;
+  border-radius: 999px;
+  background: #251f45;
+  box-shadow: 0 3px 9px rgb(0 0 0 / 20%);
+  color: #fff;
+  font-family: 'DINNextArabic', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.trigger > span {
+  display: block;
+  line-height: 1;
+  transform: translateY(-2px);
+}
+
+.emblem { display: block; flex-shrink: 0; width: 30px; height: 30px; border-radius: 7px; }
+.trigger:focus-visible, .verify:focus-visible, .website:focus-visible { outline: 2px solid #c7b4ff; outline-offset: 4px; }
+
+@media (max-width: 480px) {
+  .widget { left: 16px; }
+  .card { left: 0; }
+}

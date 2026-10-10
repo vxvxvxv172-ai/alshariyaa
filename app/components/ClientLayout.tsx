@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "./navbar";
 import WhatsappButton from "./WhatsappButton";
+import TrustedBadge from "./TrustedBadge";
 import AddToCartPopup from "./AddToCartPopup";
 import AuthProvider from "./auth/AuthProvider";
 
@@ -27,6 +28,7 @@ export default function ClientLayout({
       {children}
       {!hideChrome && !isAuth && footer}
       {!hideChrome && !isAuth && <WhatsappButton whatsapp={whatsapp} />}
+      {!hideChrome && !isAuth && <TrustedBadge />}
       {!hideChrome && !isAuth && <AddToCartPopup />}
     </AuthProvider>
   );

@@ -144,7 +144,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap"
           rel="stylesheet"
         />
 
@@ -196,16 +196,7 @@ export default async function RootLayout({
         <ClientLayout footer={<Footer />} whatsapp={c.whatsapp}>
           {children}
         </ClientLayout>
-        <div
-          className="sbc-verify-seal"
-          data-token="UGdEMHMvZm1nSlJGN0ZnVmpYZEF0UT09"
-          data-position="bottom-left"
-        />
-        {/* <Script
-          id="saudi-business-verification-seal"
-          src="https://eauthenticate.saudibusiness.gov.sa/EAuthSealApi/seal.js"
-          strategy="lazyOnload"
-        /> */}
+        {/* Saudi Business seal disabled */}
         <Analytics />
       </body>
     </html>
