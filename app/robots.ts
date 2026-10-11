@@ -3,16 +3,22 @@ import { MetadataRoute } from "next";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      // Googlebot and Googlebot-Image: full access to products and images
+      // Googlebot, Googlebot-Image, Storebot-Google, AdsBot: full access to products and images
       {
-        userAgent: ["Googlebot", "Googlebot-Image"],
-        allow: "/",
+        userAgent: [
+          "Googlebot",
+          "Googlebot-Image",
+          "Storebot-Google",
+          "AdsBot-Google",
+          "AdsBot-Google-Mobile",
+        ],
+        allow: ["/", "/_next/image"],
         disallow: ["/admin/", "/api/", "/checkout/", "/account/", "/auth/"],
       },
       // All other bots
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/_next/image"],
         disallow: [
           "/admin/",
           "/api/",
@@ -23,7 +29,7 @@ export default function robots(): MetadataRoute.Robots {
           "/cart/",
           "/search/",
           "/maintenance/",
-          "/_next/",
+          "/_next/static/",
         ],
       },
     ],
