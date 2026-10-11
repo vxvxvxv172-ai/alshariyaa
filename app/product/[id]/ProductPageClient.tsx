@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { identify, track } from "../../lib/useTikTokEvents";
+import { useAuthStore } from "../../store/authStore";
 import { useSnapProductView } from "../../lib/useSnapProductView";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -19,6 +20,7 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
   const router = useRouter();
   const [addedToCart, setAddedToCart] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const { user } = useAuthStore();
 
   const product = initialProduct;
   useSnapProductView(product);
@@ -29,10 +31,29 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
 
   useEffect(() => {
     if (!product) return;
-    identify();
+
+    // ── Advanced Matching ─────────────────────────────────────────────────
+    // Only identify when we have a logged-in user with real, valid data.
+    // identify() internally validates email format and phone (E.164) and
+    // skips hashing empty values, preventing the "invalid email/phone" warnings.
+    if (user) {
+      identify(user.email, user.phone, user._id ?? user.id);
+    }
+
+    // ── ViewContent ───────────────────────────────────────────────────────
+    // content_id must match the product's catalog ID exactly (no prefix,
+    // no trailing space, not empty). We skip the event if _id is missing.
+    if (!product._id?.trim()) return;
+
     track("ViewContent", {
-      contents: [{ content_id: product._id, content_type: "product", content_name: product.name }],
-      value: product.salePrice ?? product.originalPrice ?? 0,
+      contents: [{
+        content_id: product._id.trim(),
+        content_type: "product",
+        content_name: product.name,
+        quantity: 1,
+        price: product.salePrice ?? product.originalPrice ?? product.price ?? 0,
+      }],
+      value: product.salePrice ?? product.originalPrice ?? product.price ?? 0,
       currency: "SAR",
     });
   }, [product?._id]);

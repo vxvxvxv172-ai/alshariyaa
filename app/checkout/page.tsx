@@ -94,22 +94,34 @@ export default function CheckoutPage() {
   // InitiateCheckout — مرة واحدة بعد التحميل
   useEffect(() => {
     if (!mounted || items.length === 0) return;
-    identify();
+
+    // Pass real customer data for advanced matching.
+    // identify() validates format & only hashes valid, non-empty values.
+    identify(customer.email, customer.phone, user?._id ?? user?.id);
+
+    const checkoutValue = Math.max(0, totalPrice() - discount);
     track("InitiateCheckout", {
-      contents: items.map(i => ({ content_id: i.product._id, content_type: "product" as const, content_name: i.product.name })),
-      value: Math.max(0, totalPrice() - discount),
+      contents: items.map(i => ({
+        content_id: i.product._id.trim(),
+        content_type: "product" as const,
+        content_name: i.product.name,
+        quantity: i.qty,
+        price: i.product.salePrice ?? i.product.originalPrice ?? i.product.price ?? 0,
+      })).filter(c => c.content_id !== ""),
+      value: checkoutValue,
       currency: "SAR",
     });
     // Snap START_CHECKOUT
     try {
       initializeSnapPixel()('track', 'START_CHECKOUT', {
-        price: Math.max(0, totalPrice() - discount),
+        price: checkoutValue,
         currency: 'SAR',
-        item_ids: items.map(i => i.product._id),
+        item_ids: items.map(i => i.product._id).filter(id => id?.trim()),
         number_items: items.reduce((s, i) => s + i.qty, 0),
       });
     } catch { /* analytics must not break checkout */ }
   }, [mounted]);
+
 
   if (!mounted) return null;
   if (items.length === 0) { router.replace("/cart"); return null; }

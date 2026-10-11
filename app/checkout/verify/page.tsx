@@ -118,12 +118,31 @@ export default function VerifyPage() {
     const txId = verifyData.orderId ?? verifyData._id ?? '';
 
     // ── TikTok Pixel ─────────────────────────────────────────────
-    identify();
-    track("Purchase", {
-      contents: (verifyData.items || []).map(i => ({ content_id: i.productId || "", content_type: "product" as const, content_name: i.name })),
-      value: verifyData.amount,
-      currency: "SAR",
-    });
+    // Pass the customer's phone so advanced matching can be applied.
+    // identify() validates format (E.164) before hashing — invalid/empty
+    // values are silently dropped rather than sent as hashed empty strings.
+    await identify(undefined, verifyData.phone);
+
+    // Filter out items whose productId is empty — sending empty content_ids
+    // causes the 0% catalog match rate.
+    const purchaseContents = (verifyData.items || [])
+      .filter(i => i.productId?.trim())
+      .map(i => ({
+        content_id: i.productId!.trim(),
+        content_type: "product" as const,
+        content_name: i.name,
+        quantity: i.quantity,
+        price: i.price,
+      }));
+
+    if (purchaseContents.length > 0) {
+      track("Purchase", {
+        contents: purchaseContents,
+        value: verifyData.amount,
+        currency: "SAR",
+      });
+    }
+
 
     // ── Snap Pixel ───────────────────────────────────────────────
     if (txId.trim()) {
